@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🚀 Redis + MongoDB Hybrid Storage System Demo
+Redis + MongoDB Hybrid Storage System Demo
 ==============================================
 
 Demonstrates automatic memory pressure detection,

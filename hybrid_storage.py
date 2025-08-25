@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🚀 Redis + MongoDB Hybrid Storage System
+Redis + MongoDB Hybrid Storage System
 ========================================
 
 Automatic memory pressure detection, intelligent data migration,

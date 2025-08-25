@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-🚀 Enhanced TaskQ - Integrated Redis + MongoDB Hybrid Storage
+Enhanced TaskQ - Integrated Redis + MongoDB Hybrid Storage
 =============================================================
 
 Automatic memory pressure detection, intelligent data migration,
