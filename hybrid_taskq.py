@@ -9,8 +9,15 @@ and seamless CRUD operations.
 
 import time
 import logging
+import os
 from typing import Any, Dict, List, Optional
+from uuid import uuid4
+from dotenv import load_dotenv
+
 from hybrid_storage import HybridStorage, StorageConfig
+
+# Load environment variables
+load_dotenv()
 
 logger = logging.getLogger(__name__)
 
@@ -21,14 +28,14 @@ class HybridTaskQ:
     def __init__(
         self,
         name: str,
-        uri: str = "http://localhost:9000",
-        redis_uri: str = "redis://localhost:6379",
-        mongodb_uri: str = "mongodb://localhost:27017",
-        database: str = "zaku_hybrid",
+        uri: str = os.getenv("ZAKU_SERVER_URI", "http://localhost:9000"),
+        redis_uri: str = os.getenv("REDIS_URI", "redis://localhost:6379"),
+        mongodb_uri: str = os.getenv("MONGODB_URI", "mongodb://localhost:27017"),
+        database: str = os.getenv("MONGODB_DATABASE", "zaku_hybrid"),
         collection: str = None,
-        memory_threshold: float = 0.8,
-        memory_check_interval: int = 5,
-        batch_size: int = 100,
+        memory_threshold: float = float(os.getenv("STORAGE_MEMORY_THRESHOLD", "0.8")),
+        memory_check_interval: int = int(os.getenv("STORAGE_MEMORY_CHECK_INTERVAL", "5")),
+        batch_size: int = int(os.getenv("STORAGE_BATCH_SIZE", "100")),
     ):
         """
         Initialize the hybrid storage TaskQ.
@@ -77,7 +84,7 @@ class HybridTaskQ:
 
     def _generate_task_id(self) -> str:
         """Generate a unique task ID."""
-        return f"{int(time.time() * 1000)}_{id(self)}"
+        return f"{int(time.time() * 1000)}_{id(self)}_{str(uuid4())}"
 
     def add(self, data: Any, priority: int = 0) -> str:
         """

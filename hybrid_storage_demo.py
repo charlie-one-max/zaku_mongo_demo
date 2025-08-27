@@ -22,7 +22,7 @@ def demo_basic_operations():
     queue = HybridTaskQ(
         name="demo-queue",
         redis_uri="redis://localhost:6379",
-        mongodb_uri="mongodb://localhost:27017"
+        mongodb_uri="mongodb://root:123456@47.108.52.192:27017"
     )
 
     try:
@@ -50,7 +50,7 @@ def demo_basic_operations():
         for status, count in status_stats.items():
             print(f"  {status}: {count}")
 
-        # Take tasks
+        # Take tasks Get tasks
         print("\n📤 Taking tasks...")
         for i in range(3):
             task_data = queue.take(timeout=5.0)
@@ -92,7 +92,7 @@ def demo_memory_pressure_simulation():
     queue = HybridTaskQ(
         name="pressure-queue",
         redis_uri="redis://localhost:6379",
-        mongodb_uri="mongodb://localhost:27017",
+        mongodb_uri="mongodb://root:123456@47.108.52.192:27017",
         memory_threshold=0.6  # Lower threshold for demo
     )
 
@@ -144,7 +144,7 @@ def demo_memory_pressure_simulation():
         for key, value in stats.items():
             print(f"  {key}: {value}")
 
-        queue.reset()
+        # queue.reset()
 
     except Exception as e:
         print(f"❌ Memory pressure simulation failed: {e}")
@@ -158,7 +158,7 @@ def demo_concurrent_operations():
     queue = HybridTaskQ(
         name="concurrent-queue",
         redis_uri="redis://localhost:6379",
-        mongodb_uri="mongodb://localhost:27017"
+        mongodb_uri="mongodb://root:123456@47.108.52.192:27017"
     )
 
     def producer(producer_id: int, task_count: int):
@@ -183,6 +183,7 @@ def demo_concurrent_operations():
 
         while processed_count < task_count:
             try:
+
                 task_data = queue.take(timeout=2.0)
                 if task_data:
                     print(
@@ -245,13 +246,13 @@ def demo_factory_pattern():
         queue1 = HybridTaskQFactory.create(
             name="factory-queue-1",
             redis_uri="redis://localhost:6379",
-            mongodb_uri="mongodb://localhost:27017"
+            mongodb_uri="mongodb://root:123456@47.108.52.192:27017"
         )
 
         queue2 = HybridTaskQFactory.create(
             name="factory-queue-2",
             redis_uri="redis://localhost:6379",
-            mongodb_uri="mongodb://localhost:27017"
+            mongodb_uri="mongodb://root:123456@47.108.52.192:27017"
         )
 
         print("✅ Queues created using factory pattern")
@@ -281,8 +282,6 @@ def main():
     try:
         demo_basic_operations()
         demo_memory_pressure_simulation()
-        demo_concurrent_operations()
-        demo_factory_pattern()
 
         print("\n🎉 All demos completed!")
         print("\n📚 System Features Summary:")
@@ -292,7 +291,6 @@ def main():
         print("• ✅ High concurrency support")
         print("• ✅ Task priority management")
         print("• ✅ Automatic cleanup mechanism")
-        print("• ✅ Factory pattern support")
 
     except Exception as e:
         print(f"\n❌ Demo execution failed: {e}")

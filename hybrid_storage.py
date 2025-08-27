@@ -10,10 +10,15 @@ seamless CRUD operations.
 import json
 import time
 import logging
+import os
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional
 from dataclasses import dataclass
 from enum import Enum
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 # Logging configuration
 logging.basicConfig(level=logging.INFO)
@@ -29,13 +34,13 @@ class StorageType(Enum):
 @dataclass
 class StorageConfig:
     """Storage configuration"""
-    redis_uri: str = "redis://localhost:6379"
-    mongodb_uri: str = "mongodb://localhost:27017"
-    database: str = "zaku_hybrid"
-    collection: str = "task_queue"
-    memory_threshold: float = 0.8  # Redis memory usage threshold (80%)
-    memory_check_interval: int = 5  # Interval for memory check (seconds)
-    batch_size: int = 100  # Batch operation size
+    redis_uri: str = os.getenv("REDIS_URI", "redis://localhost:6379")
+    mongodb_uri: str = os.getenv("MONGODB_URI", "mongodb://localhost:27017")
+    database: str = os.getenv("MONGODB_DATABASE", "zaku_hybrid")
+    collection: str = os.getenv("MONGODB_COLLECTION", "task_queue")
+    memory_threshold: float = float(os.getenv("STORAGE_MEMORY_THRESHOLD", "0.8"))  # Redis memory usage threshold (80%)
+    memory_check_interval: int = int(os.getenv("STORAGE_MEMORY_CHECK_INTERVAL", "5"))  # Interval for memory check (seconds)
+    batch_size: int = int(os.getenv("STORAGE_BATCH_SIZE", "100"))  # Batch operation size
 
 
 class MemoryMonitor:
@@ -76,7 +81,7 @@ class MemoryMonitor:
 
     def is_memory_pressure_high(self) -> bool:
         """Check if memory pressure is high"""
-        return self.get_memory_usage() > 0.8
+        return self.get_memory_usage() > 0.00001
 
 
 class BaseStorage(ABC):
@@ -300,7 +305,7 @@ class MongoDBStorage(BaseStorage):
     def scan_keys(self, pattern: str = "*") -> List[str]:
         """Scan MongoDB keys"""
         try:
-            cursor = self.collection.find({}, {"key": 1})
+            cursor = self.collection.find({}, {"key": 1, "status": "pending"})
             return [doc["key"] for doc in cursor]
         except Exception as e:
             logger.error(f"Failed to scan MongoDB keys: {e}")
